@@ -1,0 +1,63 @@
+'''PROG 4 BACK PROPOGATION IN NEURAL NETS'''
+import numpy as np # numpy is commonly used to process number array
+X = np.array(([2, 9], [1, 5], [3, 6]), dtype=float) # Features ( Hrs Slept, 
+                                                    # Hrs Studied)
+y = np.array(([92], [86], [89]), dtype=float) # Labels(Marks obtained)
+
+# Normalize.
+X = X/np.amax(X,axis=0) #np.amax Return the maximum of an array 
+y = y/100
+
+def sigmoid(x):
+    return 1/(1 + np.exp(-x))
+def sigmoid_grad(x):
+    return x * (1 - x)
+
+# Variable initialization
+epoch=1000 #Setting training iterations
+eta =0.2 #Setting learning rate (eta)
+input_neurons = 2 #number of features in data set
+hidden_neurons = 3 #number of hidden layers neurons
+output_neurons = 1 #number of neurons at output layerlr=0.1 
+
+# Weight and bias - Random initialization
+wh=np.random.uniform(size=(input_neurons,hidden_neurons))#weight of hiddenlayer
+bh=np.random.uniform(size=(1,hidden_neurons))#bias of hiddenlayer
+wout=np.random.uniform(size=(hidden_neurons,output_neurons))#weight of o/player
+bout=np.random.uniform(size=(1,output_neurons))#bias of o/player
+'''      np.random.uniform() : Draw samples from a uniform distribution.
+size is the Output shape.  If the given shape is, e.g., (m, n, k), then 
+m * n * k samples are drawn.     '''
+
+for i in range(epoch):
+    #Forward Propogation
+    h_ip   =np.dot(X,wh) + bh # Dot product + bias
+    h_out  = sigmoid(h_ip) # Activation function
+    o_ip   =np.dot(h_out,wout) + bout # Dot product + bias
+    output = sigmoid(o_ip)#the output layer that was predicted in forward prop
+    
+    #Backpropagation:
+    #1. Error at Output layer
+    Eo = y-output # Error at o/p layer
+    outgrad = sigmoid_grad(output)#How much o/p layer wts contributed to error
+    d_output = Eo* outgrad # delta_output : change in output layer
+    #2. Error at Hidden layer
+    Eh = d_output.dot(wout.T) #Error at hidden layer. .T means transpose
+    hiddengrad = sigmoid_grad(h_out)#How much hdn layer wts contributedTo error
+    d_hidden = Eh * hiddengrad # delta_hidden : change in hidden layer
+    
+    #3. Correcting the weights 
+    # Dotproduct of current-layer-output and next-layer-error 
+    wout += h_out.T.dot(d_output) *eta 
+    wh += X.T.dot(d_hidden) *eta
+    
+print("Input: \n" + str(X))
+print("Actual Output: \n" + str(y))
+print("Predicted Output: \n" ,output)
+
+'''
+h_ip : hidden layer input
+h_out: hidden hayer output
+o_ip : output layer input
+output: output layer output(ie. the final output of network)
+'''

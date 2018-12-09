@@ -1,0 +1,23 @@
+import numpy as np 
+import pandas as pd 
+import sklearn
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+dataset = pd.read_csv('diabetes.csv') 
+
+from sklearn.cross_validation import train_test_split
+#from sklearn.model_selection import train_test_split
+dataset.columns[:-1]
+X = dataset[dataset.columns[:-1]] 
+y = dataset['Outcome']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3) 
+
+from sklearn.naive_bayes import GaussianNB 
+clf = GaussianNB() 
+clf.fit(X_train, y_train) 
+predictions = clf.predict(X_test)
+print(predictions)
+print("The accuracy score of the model is: ", accuracy_score(y_test, predictions)) 
+print("\n")
+print("The confusion matrix of the classification is: \n", confusion_matrix(y_test, predictions)) 
+print("\n")
+print("The classification report is: \n", classification_report(y_test, predictions)) 
